@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Tripweb Tools</title>
+<link rel="icon" type="image/png" href="https://tripweb.page.gd/library/weblogo.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+html{font-size:16px}
+*{-webkit-text-size-adjust:100%;text-size-adjust:100%;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#1e1e1e;color:#fff;margin:0;padding:0}
+header{background:#2a2a2a;border-bottom:1px solid #3d3d3d;color:#ffcc00;text-align:center;font-weight:600;padding:18px 0;position:sticky;top:0;z-index:1000;font-size:1.3rem}
+.container{max-width:720px;margin:30px auto;padding:0 15px;display:grid;gap:20px;grid-template-columns:1fr;}
+.searchBox{background:#2a2a2a;border:1px solid #3d3d3d;border-radius:12px;padding:16px}
+.searchInput{width:100%;padding:10px;border-radius:8px;border:1px solid #3d3d3d;background:#1e1e1e;color:#fff;font-size:.9rem;margin-bottom:10px}
+.searchBtn{background:#ffcc00;color:#111;border:none;border-radius:8px;padding:10px 18px;font-weight:600;cursor:pointer;width:100%}
+.resultUser{background:#2a2a2a;border:1px solid #3d3d3d;border-radius:12px;padding:12px;margin-bottom:10px;display:flex;gap:12px}
+.pp{width:48px;height:48px;border-radius:8px;object-fit:cover}
+.resText{flex:1}
+.resName{font-weight:600;font-size:1rem;color:#fff;margin:0 0 4px}
+.bio{font-size:.8rem;color:#ccc;margin:0 0 6px}
+.linkBtn{background:#ffcc00;color:#111;border:none;border-radius:6px;padding:6px 12px;font-size:.75rem;font-weight:600;cursor:pointer;height:max-content}
+</style>
+</head>
+<body>
+<header>Tripweb Tools</header><div class="container"><div class="searchBox">
+<input id="query" class="searchInput" placeholder="Search GitHub user..."/>
+<button class="searchBtn" onclick="doSearch()">Search</button>
+</div><div id="results"></div></div><script>
+async function doSearch(){
+  let q=document.getElementById('query').value.trim();
+  if(!q) return;
+
+  let resDiv=document.getElementById('results');
+  resDiv.innerHTML='Loading...';
+
+  try{
+    let r=await fetch(`https://api.github.com/search/users?q=${q}&per_page=100`);
+    let d=await r.json();
+
+    if(!d.items){resDiv.innerHTML='No results';return;}
+
+    let html='';
+
+    for(let u of d.items){
+      html+=`
+        <div class="resultUser">
+          <img src="${u.avatar_url}" class="pp"/>
+          <div class="resText">
+            <div class="resName">${u.login}</div>
+            <div class="bio">ID: ${u.id}</div>
+          </div>
+          <a href="${u.html_url}"><button class="linkBtn">Open</button></a>
+        </div>
+      `;
+    }
+
+    resDiv.innerHTML=html;
+  }catch(e){
+    resDiv.innerHTML='Error fetching data';
+  }
+}
+</script></body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Tripweb Tools</title>
+<link rel="icon" type="image/png" href="https://tripweb.page.gd/library/weblogo.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+html{font-size:16px}
+*{-webkit-text-size-adjust:100%;text-size-adjust:100%;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#1e1e1e;color:#fff;margin:0;padding:0}
+header{background:#2a2a2a;border-bottom:1px solid #3d3d3d;color:#ffcc00;text-align:center;font-weight:600;padding:18px 0;position:sticky;top:0;z-index:1000;font-size:1.3rem}
+.container{max-width:720px;margin:30px auto;padding:0 15px;display:grid;gap:20px;grid-template-columns:1fr;}
+.app{background:#2a2a2a;border:1px solid #3d3d3d;border-radius:12px;padding:16px;font-size:.9rem;position:relative;overflow:hidden}
+.app:hover{border-color:#ffcc00}
+.app-header{display:flex;justify-content:space-between;align-items:flex-start}
+.app-title-wrap{display:flex;align-items:center;gap:8px;flex:1}
+.app-title{font-size:1.1rem;font-weight:600;color:#fff}
+.app-desc{font-size:.8rem;color:#bbb;margin:6px 0;line-height:1.4}
+.app-badge{font-size:.65rem;font-weight:600;padding:2px 6px;border-radius:4px;border:none;background:transparent;color:#fff}
+.app-badge.tripweb{background:#ffcc00;color:#111}
+.arrow-btn{background:none;border:none;color:#ffcc00;font-size:1.5rem;cursor:pointer;transition:transform .3s ease}
+.arrow-btn.open{transform:rotate(180deg)}
+.arrow-btn:active{transform:scale(.9);transition:.1s}
+.expand-area{max-height:0;overflow:hidden;transition:max-height .4s ease, padding .4s ease;padding:0 4px}
+.expand-area.show{max-height:500px;padding:10px 4px 4px}
+.output-box{background:#222;border:1px solid #444;border-radius:10px;padding:14px;margin-top:12px;line-height:1.5}
+.output-box img{width:90px;height:90px;border-radius:50%;display:block;margin:10px auto;border:2px solid #ffcc00}
+.search-wrap{display:flex;gap:10px;margin-top:10px}
+.search-wrap input{flex:1;padding:10px;border-radius:6px;border:1px solid #555;background:#111;color:#fff}
+.search-wrap button{background:#ffcc00;color:#111;border:none;border-radius:6px;padding:10px 14px;font-weight:600;cursor:pointer}
+.search-wrap button:active{transform:scale(.95)}
+</style>
+</head>
+<body>
+<header>Tripweb Tools</header><div class="container">
+  <div class="app">
+    <div class="app-header">
+      <div class="app-title-wrap">
+        <div class="app-title">GitHub Profile Found</div>
+      </div>
+    </div><div class="search-wrap">
+  <input type="text" id="ghUser" placeholder="Enter GitHub username...">
+  <button onclick="lookup()">Search</button>
+</div>
+
+<div id="result" class="output-box" style="display:none"></div>
+
+  </div>
+</div><script>
+async function lookup(){
+  const user = document.getElementById('ghUser').value.trim();
+  const box = document.getElementById('result');
+  if(!user){box.style.display='block';box.innerHTML='Fill in the username first.';return;}
+  box.style.display='block';
+  box.innerHTML='Loading...';
+
+  try{
+    const res = await fetch(`https://api.github.com/users/${user}`);
+    if(!res.ok){ box.innerHTML='User not found.'; return; }
+    const d = await res.json();
+
+    box.innerHTML = `
+      <img src="${d.avatar_url}"/>
+      <div><strong>Username:</strong> ${d.login || '-'} </div>
+      <div><strong>Bio:</strong> ${d.bio || '-'} </div>
+      <div><strong>Followers:</strong> ${d.followers} </div>
+      <div><strong>Following:</strong> ${d.following} </div>
+      <div><strong>Public Repos:</strong> ${d.public_repos} </div>
+      <div><strong>PP:</strong> <a href="${d.avatar_url}">${d.avatar_url}</a></div>
+      <div><strong>Link:</strong> <a href="${d.html_url}">${d.html_url}</a></div>
+    `;
+  }catch(err){ box.innerHTML='Error koneksi.'; }
+}
+</script></body>
+</html>
